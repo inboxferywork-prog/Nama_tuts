@@ -169,13 +169,56 @@
     transform: translateY(0);
   }
 
+  /* Scroll container for piano */
+  .keys-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-bottom: 8px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    /* hide scrollbar but keep functionality */
+    scrollbar-width: thin;
+    scrollbar-color: #ffffff22 transparent;
+    border-radius: 12px;
+  }
+  .keys-scroll::-webkit-scrollbar { height: 5px; }
+  .keys-scroll::-webkit-scrollbar-track { background: transparent; }
+  .keys-scroll::-webkit-scrollbar-thumb { background: #ffffff22; border-radius: 4px; }
+
+  /* Fade edges to hint scrollability */
+  .keys-scroll-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  .keys-scroll-wrapper::before,
+  .keys-scroll-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 8px;
+    width: 32px;
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .keys-scroll-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--card), transparent);
+  }
+  .keys-scroll-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--card), transparent);
+  }
+
   /* Keys wrapper */
   .keys-wrapper {
     position: relative;
     display: flex;
     height: 130px;
     gap: 5px;
-    padding: 0 4px;
+    padding: 0 12px;
+    width: max-content;
   }
 
   .white-key {
@@ -345,8 +388,12 @@
   </button>
 
   <div class="piano-area" id="pianoArea">
-    <div class="keys-wrapper" id="keysWrapper">
-      <!-- Keys injected by JS -->
+    <div class="keys-scroll-wrapper">
+      <div class="keys-scroll" id="keysScroll">
+        <div class="keys-wrapper" id="keysWrapper">
+          <!-- Keys injected by JS -->
+        </div>
+      </div>
     </div>
 
     <div class="note-display">
@@ -397,9 +444,9 @@ const WHITE_NOTES = ['C','D','E','F','G','A','B'];
 // Black key positions (between which white keys)
 const BLACK_OFFSETS = { 1: 'C#', 2: 'D#', 4: 'F#', 5: 'G#', 6: 'A#' };
 
-// Show 2 octaves (C3–B4) — a nice middle range
-const OCTAVE_START = 3;
-const OCTAVE_END = 4;
+// Show 5 octaves (C2–B6) — covers nearly full piano range
+const OCTAVE_START = 2;
+const OCTAVE_END = 6;
 
 // Note frequencies: standard 12-TET from C0
 function noteFreq(noteName, octave) {
@@ -647,14 +694,12 @@ function showNote(note, octave) {
   const solName = SOL_NAMES[note];
   const isBlack = note.includes('#');
 
-  // Find the key to highlight
-  // Show nearby octave if exact match not found
+  // Find the key to highlight — exact octave match first
   let keyEl = allKeyEls[note + octave];
   if (!keyEl) {
-    // try nearby octaves
-    for (let o = OCTAVE_START; o <= OCTAVE_END; o++) {
-      if (allKeyEls[note + o]) { keyEl = allKeyEls[note + o]; break; }
-    }
+    // Clamp to rendered range if out of bounds
+    const clampedOct = Math.max(OCTAVE_START, Math.min(OCTAVE_END, octave));
+    keyEl = allKeyEls[note + clampedOct];
   }
 
   if (keyEl) {
@@ -667,6 +712,8 @@ function showNote(note, octave) {
       keyEl.style.boxShadow = `0 0 30px ${color}, inset 0 0 20px rgba(255,255,255,0.5)`;
       keyEl.style.borderColor = color;
     }
+    // Scroll the piano so the active key is centered
+    scrollToKey(keyEl);
   }
 
   // Note name display
@@ -703,7 +750,23 @@ function showNote(note, octave) {
 // UI HELPERS
 // ============================================================
 
-function setStatus(emoji, text) {
+function scrollToKey(keyEl) {
+  const scrollEl = document.getElementById('keysScroll');
+  if (!scrollEl || !keyEl) return;
+
+  const scrollRect = scrollEl.getBoundingClientRect();
+  const keyRect = keyEl.getBoundingClientRect();
+
+  // Current scroll position + offset of key relative to scroll container
+  const keyLeft = keyRect.left - scrollRect.left + scrollEl.scrollLeft;
+  const keyCenter = keyLeft + keyRect.width / 2;
+  const scrollCenter = scrollRect.width / 2;
+
+  scrollEl.scrollTo({
+    left: keyCenter - scrollCenter,
+    behavior: 'smooth'
+  });
+}
   document.getElementById('statusBubble').innerHTML =
     `<span class="emoji">${emoji}</span><span>${text}</span>`;
 }
@@ -754,6 +817,13 @@ buildStars();
 buildPiano();
 window.addEventListener('resize', updateKeySize);
 updateKeySize();
+
+// On first show, center piano at C4 (middle C)
+document.getElementById('pianoArea').addEventListener('transitionend', function onVisible() {
+  const c4 = allKeyEls['C4'];
+  if (c4) scrollToKey(c4);
+  this.removeEventListener('transitionend', onVisible);
+});
 </script>
 </body>
 </html>
