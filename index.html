@@ -7,587 +7,376 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
 
-  :root {
-    --do: #FF6B6B;
-    --re: #FF9F43;
-    --mi: #FECA57;
-    --fa: #48DBFB;
-    --sol: #54A0FF;
-    --la: #5F27CD;
-    --si: #FF9FF3;
-    --bg: #1a1a2e;
-    --card: #16213e;
-    --card2: #0f3460;
-  }
+  :root { --bg:#1a1a2e; --card:#16213e; --card2:#0f3460; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing:border-box; margin:0; padding:0; }
 
   body {
-    background: var(--bg);
-    font-family: 'Nunito', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
+    background:var(--bg);
+    font-family:'Nunito',sans-serif;
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center;
+    overflow-x:hidden; overflow-y:auto;
+    padding:16px 0 32px;
   }
 
-  /* Animated background stars */
-  .stars {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .star {
-    position: absolute;
-    border-radius: 50%;
-    background: white;
-    animation: twinkle 2s infinite alternate;
-  }
-
+  /* Stars */
+  .stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
+  .star  { position:absolute; border-radius:50%; background:white; animation:twinkle 2s infinite alternate; }
   @keyframes twinkle {
-    from { opacity: 0.1; transform: scale(1); }
-    to { opacity: 0.8; transform: scale(1.3); }
+    from { opacity:0.1; transform:scale(1); }
+    to   { opacity:0.8; transform:scale(1.3); }
   }
 
+  /* Container */
   .container {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    padding: 20px;
-    width: 100%;
-    max-width: 700px;
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; align-items:center;
+    gap:16px; padding:0 12px; width:100%;
   }
 
   /* Title */
   .title {
-    font-family: 'Fredoka One', cursive;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    text-align: center;
-    background: linear-gradient(135deg, #FF6B6B, #FECA57, #48DBFB, #FF9FF3);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 20px rgba(255,107,107,0.4));
-    animation: titleFloat 3s ease-in-out infinite;
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(1.8rem,5vw,3rem); text-align:center;
+    background:linear-gradient(135deg,#FF6B6B,#FECA57,#48DBFB,#FF9FF3);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    filter:drop-shadow(0 0 20px rgba(255,107,107,0.4));
+    animation:titleFloat 3s ease-in-out infinite;
   }
+  @keyframes titleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-  @keyframes titleFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-
-  /* Status bubble */
+  /* Status */
   .status-bubble {
-    background: var(--card);
-    border: 3px solid #ffffff22;
-    border-radius: 24px;
-    padding: 16px 28px;
-    text-align: center;
-    font-size: clamp(1rem, 3vw, 1.3rem);
-    color: #eee;
-    font-weight: 700;
-    min-height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: all 0.4s ease;
-    width: 100%;
-    max-width: 480px;
+    background:var(--card); border:3px solid #ffffff22; border-radius:20px;
+    padding:12px 22px; text-align:center;
+    font-size:clamp(0.85rem,2.4vw,1.15rem); color:#eee; font-weight:700;
+    min-height:54px; display:flex; align-items:center; justify-content:center;
+    gap:10px; width:100%; max-width:560px;
   }
+  .status-bubble .emoji { font-size:1.6em; animation:bounce 0.6s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-5px)} }
 
-  .status-bubble .emoji {
-    font-size: 1.8em;
-    animation: bounce 0.6s ease infinite alternate;
-  }
-
-  @keyframes bounce {
-    from { transform: translateY(0); }
-    to { transform: translateY(-6px); }
-  }
-
-  /* Mic button */
+  /* Mic */
   .mic-btn {
-    background: linear-gradient(135deg, #FF6B6B, #FF9F43);
-    border: none;
-    border-radius: 50%;
-    width: 90px;
-    height: 90px;
-    font-size: 2.5rem;
-    cursor: pointer;
-    box-shadow: 0 0 30px rgba(255,107,107,0.5), 0 8px 20px rgba(0,0,0,0.4);
-    transition: transform 0.2s, box-shadow 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: pulseBtn 2s ease-in-out infinite;
+    background:linear-gradient(135deg,#FF6B6B,#FF9F43);
+    border:none; border-radius:50%; width:78px; height:78px;
+    font-size:2rem; cursor:pointer;
+    box-shadow:0 0 28px rgba(255,107,107,0.5),0 8px 18px rgba(0,0,0,0.4);
+    display:flex; align-items:center; justify-content:center;
+    animation:pulseBtn 2s ease-in-out infinite;
+  }
+  .mic-btn:hover { transform:scale(1.08); }
+  .mic-btn.listening { background:linear-gradient(135deg,#FF2222,#FF6B6B); animation:listenPulse 0.8s ease-in-out infinite; }
+  @keyframes pulseBtn  { 0%,100%{box-shadow:0 0 28px rgba(255,107,107,0.5),0 8px 18px rgba(0,0,0,0.4)} 50%{box-shadow:0 0 48px rgba(255,107,107,0.9),0 8px 24px rgba(0,0,0,0.4)} }
+  @keyframes listenPulse { 0%,100%{transform:scale(1);box-shadow:0 0 36px rgba(255,30,30,0.8)} 50%{transform:scale(1.07);box-shadow:0 0 64px rgba(255,30,30,1)} }
+
+  /* Level buttons */
+  .level-btns {
+    display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+    width:100%; max-width:560px;
+  }
+  .level-btn {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(0.72rem,1.9vw,0.98rem);
+    padding:8px 14px; border:3px solid #ffffff22;
+    border-radius:50px; background:var(--card2); color:#bbb;
+    cursor:pointer; transition:all 0.22s ease;
+    flex:1; min-width:80px; max-width:130px;
+  }
+  .level-btn:hover { transform:scale(1.05); border-color:#ffffff55; color:white; }
+  .level-btn.active { color:white; border-color:transparent; }
+  .level-btn[data-level="p1"].active { background:linear-gradient(135deg,#FF6B6B,#FF9F43); box-shadow:0 0 14px #FF9F4388; }
+  .level-btn[data-level="p2"].active { background:linear-gradient(135deg,#48DBFB,#54A0FF); box-shadow:0 0 14px #48DBFB88; }
+  .level-btn[data-level="kb"].active { background:linear-gradient(135deg,#FECA57,#FF9F43); box-shadow:0 0 14px #FECA5788; }
+  .level-btn[data-level="pi"].active { background:linear-gradient(135deg,#A29BFE,#FF9FF3); box-shadow:0 0 14px #A29BFE88; }
+
+  /* Piano card */
+  .piano-card {
+    background:var(--card); border:3px solid #ffffff15; border-radius:24px;
+    padding:20px 14px 16px;
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    width:100%; box-shadow:0 16px 48px rgba(0,0,0,0.5);
   }
 
-  .mic-btn:hover { transform: scale(1.1); }
-  .mic-btn.listening {
-    background: linear-gradient(135deg, #FF3333, #FF6B6B);
-    animation: listeningPulse 0.8s ease-in-out infinite;
-  }
+  /* Viewport */
+  .piano-viewport { width:100%; position:relative; overflow:hidden; }
 
-  @keyframes pulseBtn {
-    0%, 100% { box-shadow: 0 0 30px rgba(255,107,107,0.5), 0 8px 20px rgba(0,0,0,0.4); }
-    50% { box-shadow: 0 0 50px rgba(255,107,107,0.8), 0 8px 30px rgba(0,0,0,0.4); }
-  }
+  /* Stage: natural size, then CSS-scale to fit */
+  .keys-stage { position:relative; transform-origin:top left; }
 
-  @keyframes listeningPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(255,50,50,0.8); }
-    50% { transform: scale(1.08); box-shadow: 0 0 70px rgba(255,50,50,1); }
+  /* White keys */
+  .wk {
+    position:absolute; bottom:0;
+    background:linear-gradient(180deg,#f8f8f8 0%,#dcdcdc 100%);
+    border:1.5px solid #bbb; border-top:none;
+    border-radius:0 0 5px 5px;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    padding-bottom:4px; cursor:default;
+    transition:background 0.22s, box-shadow 0.22s;
+    overflow:hidden;
   }
-
-  /* Piano display */
-  .piano-area {
-    background: var(--card);
-    border: 3px solid #ffffff15;
-    border-radius: 28px;
-    padding: 28px 24px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    max-width: 640px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    transition: all 0.4s ease;
-    opacity: 0;
-    transform: translateY(20px);
+  .wk.active {
+    border-width:2px;
+    box-shadow:0 0 16px currentColor, inset 0 0 10px rgba(255,255,255,0.55);
   }
-
-  .piano-area.visible {
-    opacity: 1;
-    transform: translateY(0);
+  .c-label {
+    font-family:'Fredoka One',cursive;
+    font-size:8px; color:#aaa;
+    text-align:center; line-height:1.15;
+    pointer-events:none; user-select:none; white-space:pre-line;
   }
-
-  /* Scroll container for piano */
-  .keys-scroll {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: visible;
-    padding-bottom: 8px;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    /* hide scrollbar but keep functionality */
-    scrollbar-width: thin;
-    scrollbar-color: #ffffff22 transparent;
-    border-radius: 12px;
-  }
-  .keys-scroll::-webkit-scrollbar { height: 5px; }
-  .keys-scroll::-webkit-scrollbar-track { background: transparent; }
-  .keys-scroll::-webkit-scrollbar-thumb { background: #ffffff22; border-radius: 4px; }
-
-  /* Fade edges to hint scrollability */
-  .keys-scroll-wrapper {
-    position: relative;
-    width: 100%;
-  }
-  .keys-scroll-wrapper::before,
-  .keys-scroll-wrapper::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 8px;
-    width: 32px;
-    z-index: 3;
-    pointer-events: none;
-    transition: opacity 0.3s;
-  }
-  .keys-scroll-wrapper::before {
-    left: 0;
-    background: linear-gradient(to right, var(--card), transparent);
-  }
-  .keys-scroll-wrapper::after {
-    right: 0;
-    background: linear-gradient(to left, var(--card), transparent);
-  }
-
-  /* Keys wrapper */
-  .keys-wrapper {
-    position: relative;
-    display: flex;
-    height: 130px;
-    gap: 5px;
-    padding: 0 12px;
-    width: max-content;
-  }
-
-  .white-key {
-    width: 52px;
-    height: 130px;
-    border-radius: 0 0 12px 12px;
-    background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%);
-    border: 2px solid #ccc;
-    cursor: default;
-    position: relative;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 8px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 0.85rem;
-    color: #999;
-  }
-
-  .white-key.active {
-    transform: scaleY(1.05);
-    transform-origin: top;
-    border-width: 3px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.8);
-  }
-
-  .white-key.active .key-label { color: white; font-weight: 900; font-size: 1rem; }
+  .wk.active .c-label { color:white; }
 
   /* Black keys */
-  .black-key {
-    position: absolute;
-    width: 32px;
-    height: 80px;
-    background: linear-gradient(180deg, #333 0%, #111 100%);
-    border-radius: 0 0 8px 8px;
-    top: 0;
-    z-index: 2;
-    cursor: default;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 5px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 0.7rem;
-    color: #666;
+  .bk {
+    position:absolute; top:0;
+    background:linear-gradient(180deg,#2a2a2a 0%,#111 100%);
+    border-radius:0 0 4px 4px; z-index:2; cursor:default;
+    transition:background 0.22s, box-shadow 0.22s;
   }
+  .bk.active { box-shadow:0 0 12px currentColor, inset 0 0 7px rgba(255,255,255,0.22); }
 
-  .black-key.active {
-    transform: scaleY(1.05);
-    transform-origin: top;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(255,255,255,0.3);
-  }
-
-  .black-key.active .key-label { color: white; font-weight: 900; }
-
-  /* Note name display */
+  /* Note display */
   .note-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    min-height: 100px;
-    justify-content: center;
+    display:flex; flex-direction:column; align-items:center;
+    gap:6px; min-height:88px; justify-content:center;
   }
-
   .note-name {
-    font-family: 'Fredoka One', cursive;
-    font-size: clamp(3rem, 10vw, 5rem);
-    letter-spacing: 4px;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    opacity: 0;
-    transform: scale(0.5) translateY(20px);
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(2.8rem,9vw,4.5rem); letter-spacing:4px;
+    transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    opacity:0; transform:scale(0.5) translateY(16px);
   }
-
-  .note-name.show {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-
-  .note-sub {
-    font-size: 1rem;
-    color: #aaa;
-    font-weight: 700;
-    opacity: 0;
-    transition: opacity 0.3s ease 0.2s;
-  }
-
-  .note-sub.show { opacity: 1; }
+  .note-name.show { opacity:1; transform:scale(1) translateY(0); }
+  .note-sub { font-size:0.92rem; color:#aaa; font-weight:700; opacity:0; transition:opacity 0.22s ease 0.12s; }
+  .note-sub.show { opacity:1; }
 
   /* Confetti */
-  .confetti-container {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 100;
-  }
-
-  .confetti-piece {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    animation: confettiFall linear forwards;
-  }
-
-  @keyframes confettiFall {
-    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-  }
-
-  /* Listening wave */
-  .wave-container {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    height: 30px;
-  }
-
-  .wave-bar {
-    width: 5px;
-    background: #48DBFB;
-    border-radius: 3px;
-    animation: waveAnim 0.5s ease-in-out infinite alternate;
-  }
-
-  @keyframes waveAnim {
-    from { height: 5px; }
-    to { height: 28px; }
-  }
-
-  /* Octave indicators */
-  .octave-info {
-    font-size: 0.85rem;
-    color: #555;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-
-  /* Responsive */
-  @media (max-width: 480px) {
-    .white-key { width: 40px; }
-    .black-key { width: 24px; }
-    .keys-wrapper { height: 110px; }
-    .white-key { height: 110px; }
-    .black-key { height: 68px; }
-  }
+  .confetti-wrap { position:fixed; inset:0; pointer-events:none; z-index:100; }
+  .cp { position:absolute; border-radius:2px; animation:fall linear forwards; }
+  @keyframes fall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
 </style>
 </head>
 <body>
 
 <div class="stars" id="stars"></div>
-
-<div class="confetti-container" id="confetti"></div>
+<div class="confetti-wrap" id="confetti"></div>
 
 <div class="container">
   <div class="title">🎹 Piano Ajaib!</div>
 
   <div class="status-bubble" id="statusBubble">
     <span class="emoji">👋</span>
-    <span id="statusText">Tekan tombol di bawah, lalu mainkan satu tuts piano!</span>
+    <span>Tekan tombol 🎤 lalu mainkan satu tuts piano!</span>
   </div>
 
-  <button class="mic-btn" id="micBtn" onclick="toggleListening()" title="Dengarkan Piano">
-    🎤
-  </button>
+  <button class="mic-btn" id="micBtn" onclick="toggleListening()">🎤</button>
 
-  <div class="piano-area" id="pianoArea">
-    <div class="keys-scroll-wrapper">
-      <div class="keys-scroll" id="keysScroll">
-        <div class="keys-wrapper" id="keysWrapper">
-          <!-- Keys injected by JS -->
-        </div>
-      </div>
+  <div class="level-btns">
+    <button class="level-btn" data-level="p1" onclick="setLevel('p1')">Primary 1</button>
+    <button class="level-btn" data-level="p2" onclick="setLevel('p2')">Primary 2</button>
+    <button class="level-btn" data-level="kb" onclick="setLevel('kb')">Keyboard</button>
+    <button class="level-btn active" data-level="pi" onclick="setLevel('pi')">Piano</button>
+  </div>
+
+  <div class="piano-card">
+    <div class="piano-viewport" id="pianoViewport">
+      <div class="keys-stage" id="keysStage"></div>
     </div>
-
     <div class="note-display">
       <div class="note-name" id="noteName">—</div>
-      <div class="note-sub" id="noteSub"></div>
+      <div class="note-sub"  id="noteSub"></div>
     </div>
   </div>
 </div>
 
 <script>
-// ============================================================
-// CONFIG
-// ============================================================
+// ──────────────────────────────────────────────────────
+// DATA
+// ──────────────────────────────────────────────────────
 
-// Solmization names (Indonesian style)
 const SOL_NAMES = {
-  'C': 'Do',
-  'C#': 'Do♯',
-  'D': 'Re',
-  'D#': 'Re♯',
-  'E': 'Mi',
-  'F': 'Fa',
-  'F#': 'Fa♯',
-  'G': 'Sol',
-  'G#': 'Sol♯',
-  'A': 'La',
-  'A#': 'La♯',
-  'B': 'Si',
+  'C':'Do','C#':'Do♯','D':'Re','D#':'Re♯','E':'Mi',
+  'F':'Fa','F#':'Fa♯','G':'Sol','G#':'Sol♯',
+  'A':'La','A#':'La♯','B':'Si'
 };
-
 const NOTE_COLORS = {
-  'C':  '#FF6B6B',
-  'C#': '#FF8C70',
-  'D':  '#FF9F43',
-  'D#': '#FFB347',
-  'E':  '#FECA57',
-  'F':  '#48DBFB',
-  'F#': '#36C9E8',
-  'G':  '#54A0FF',
-  'G#': '#4B8FF0',
-  'A':  '#A29BFE',
-  'A#': '#C39BD3',
-  'B':  '#FF9FF3',
+  'C':'#FF6B6B','C#':'#FF8070','D':'#FF9F43','D#':'#FFB347',
+  'E':'#FECA57','F':'#48DBFB','F#':'#36C9E8','G':'#54A0FF',
+  'G#':'#4B8FF0','A':'#A29BFE','A#':'#C39BD3','B':'#FF9FF3'
 };
 
-// White keys in one octave
-const WHITE_NOTES = ['C','D','E','F','G','A','B'];
-// Black key positions (between which white keys)
-const BLACK_OFFSETS = { 1: 'C#', 2: 'D#', 4: 'F#', 5: 'G#', 6: 'A#' };
+// MIDI ranges
+// Real 88-key piano: A0=21 … C8=108
+const LEVELS = {
+  p1: { startMidi:60, endMidi:67  },  // C4–G4
+  p2: { startMidi:47, endMidi:74  },  // B2–D5
+  kb: { startMidi:36, endMidi:84  },  // C2–C6
+  pi: { startMidi:21, endMidi:108 },  // A0–C8 (88 keys)
+};
 
-// Show 5 octaves (C2–B6) — covers nearly full piano range
-const OCTAVE_START = 2;
-const OCTAVE_END = 6;
+// Semitone positions in an octave
+const BLACK_SEMIS = new Set([1,3,6,8,10]);
 
-// Note frequencies: standard 12-TET from C0
-function noteFreq(noteName, octave) {
-  const semis = { C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11 };
-  const midi = (octave + 1) * 12 + semis[noteName];
-  return 440 * Math.pow(2, (midi - 69) / 12);
+// Base key dimensions (unscaled)
+const WK_W = 22, WK_GAP = 2, WK_H = 112;
+const BK_W = 13, BK_H  = 70;
+
+let currentLevel = 'pi';
+let allKeyEls    = {};  // midi number → DOM element
+
+// ──────────────────────────────────────────────────────
+// MIDI HELPERS
+// ──────────────────────────────────────────────────────
+
+function midiToNote(midi) {
+  const names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  return { note: names[midi % 12], octave: Math.floor(midi / 12) - 1 };
 }
+function isBlack(midi) { return BLACK_SEMIS.has(midi % 12); }
+function freqToMidi(freq) { return Math.round(69 + 12 * Math.log2(freq / 440)); }
 
-// ============================================================
-// BUILD PIANO UI
-// ============================================================
+// ──────────────────────────────────────────────────────
+// BUILD PIANO
+// ──────────────────────────────────────────────────────
 
-const keysWrapper = document.getElementById('keysWrapper');
-let allKeyEls = {}; // "C4", "D#3", etc.
+function buildPiano(level) {
+  const stage    = document.getElementById('keysStage');
+  const viewport = document.getElementById('pianoViewport');
+  stage.innerHTML = '';
+  allKeyEls = {};
 
-function buildPiano() {
-  keysWrapper.innerHTML = '';
-  for (let oct = OCTAVE_START; oct <= OCTAVE_END; oct++) {
-    const octaveGroup = document.createElement('div');
-    octaveGroup.style.cssText = 'position:relative; display:flex; gap:5px;';
+  const { startMidi, endMidi } = LEVELS[level];
 
-    // White keys
-    WHITE_NOTES.forEach((note, idx) => {
-      const key = document.createElement('div');
-      key.className = 'white-key';
-      key.dataset.note = note;
-      key.dataset.octave = oct;
-      key.dataset.id = note + oct;
-
-      const label = document.createElement('span');
-      label.className = 'key-label';
-      label.textContent = SOL_NAMES[note];
-      key.appendChild(label);
-
-      octaveGroup.appendChild(key);
-      allKeyEls[note + oct] = key;
-    });
-
-    // Black keys (positioned absolutely over white keys)
-    Object.entries(BLACK_OFFSETS).forEach(([pos, note]) => {
-      const key = document.createElement('div');
-      key.className = 'black-key';
-      key.dataset.note = note;
-      key.dataset.octave = oct;
-      key.dataset.id = note + oct;
-
-      const whiteW = 52 + 5; // white key width + gap
-      // pos is 1-based index of white key to the LEFT
-      const leftPx = (parseInt(pos) - 1) * whiteW + whiteW - 16;
-      key.style.left = leftPx + 'px';
-
-      const label = document.createElement('span');
-      label.className = 'key-label';
-      label.textContent = SOL_NAMES[note];
-      key.appendChild(label);
-
-      octaveGroup.appendChild(key);
-      allKeyEls[note + oct] = key;
-    });
-
-    keysWrapper.appendChild(octaveGroup);
+  // First pass: assign x-position to every white key
+  const whiteX = {}; // midi → left px
+  let x = 0;
+  for (let m = startMidi; m <= endMidi; m++) {
+    if (!isBlack(m)) {
+      whiteX[m] = x;
+      x += WK_W + WK_GAP;
+    }
   }
+  const totalW = x - WK_GAP; // remove trailing gap
+
+  stage.style.width  = totalW + 'px';
+  stage.style.height = WK_H   + 'px';
+
+  // White keys
+  for (let m = startMidi; m <= endMidi; m++) {
+    if (isBlack(m)) continue;
+    const { note, octave } = midiToNote(m);
+    const el = document.createElement('div');
+    el.className = 'wk';
+    el.style.left   = whiteX[m] + 'px';
+    el.style.width  = WK_W + 'px';
+    el.style.height = WK_H + 'px';
+
+    if (note === 'C') {
+      const lbl = document.createElement('div');
+      lbl.className = 'c-label';
+      lbl.textContent = octave === 4 ? 'Middle\nDo' : 'Do' + octave;
+      el.appendChild(lbl);
+    }
+    stage.appendChild(el);
+    allKeyEls[m] = el;
+  }
+
+  // Black keys — centered between adjacent white keys
+  for (let m = startMidi; m <= endMidi; m++) {
+    if (!isBlack(m)) continue;
+
+    const leftW  = whiteX[m - 1];
+    const rightW = whiteX[m + 1];
+    let bx;
+    if (leftW !== undefined && rightW !== undefined) {
+      bx = leftW + WK_W + WK_GAP / 2 - BK_W / 2;
+    } else if (leftW !== undefined) {
+      bx = leftW + WK_W - BK_W / 2;
+    } else if (rightW !== undefined) {
+      bx = rightW - BK_W / 2;
+    } else continue;
+
+    const el = document.createElement('div');
+    el.className = 'bk';
+    el.style.left   = bx   + 'px';
+    el.style.width  = BK_W + 'px';
+    el.style.height = BK_H + 'px';
+    stage.appendChild(el);
+    allKeyEls[m] = el;
+  }
+
+  scaleToFit();
 }
 
-// Responsive: rebuild with smaller size on mobile
-function updateKeySize() {
-  const isMobile = window.innerWidth < 480;
-  document.querySelectorAll('.white-key').forEach(k => {
-    k.style.width = isMobile ? '40px' : '52px';
-  });
-  document.querySelectorAll('.black-key').forEach(k => {
-    k.style.width = isMobile ? '24px' : '32px';
-  });
+function scaleToFit() {
+  const stage    = document.getElementById('keysStage');
+  const viewport = document.getElementById('pianoViewport');
+  const vw       = viewport.clientWidth || viewport.offsetWidth || 300;
+  const nw       = parseFloat(stage.style.width) || 1;
+  const scale    = Math.min(1, vw / nw);
+  stage.style.transform = `scale(${scale})`;
+  viewport.style.height = (WK_H * scale) + 'px';
 }
 
-// ============================================================
+// ──────────────────────────────────────────────────────
+// LEVEL SWITCHING
+// ──────────────────────────────────────────────────────
+
+function setLevel(level) {
+  currentLevel = level;
+  document.querySelectorAll('.level-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.level === level)
+  );
+  buildPiano(level);
+  if (lastMidi !== null) highlightKey(lastMidi);
+}
+
+// ──────────────────────────────────────────────────────
 // STARS
-// ============================================================
+// ──────────────────────────────────────────────────────
 
 function buildStars() {
-  const container = document.getElementById('stars');
-  for (let i = 0; i < 60; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    const size = Math.random() * 3 + 1;
-    star.style.cssText = `
-      width: ${size}px;
-      height: ${size}px;
-      left: ${Math.random() * 100}%;
-      top: ${Math.random() * 100}%;
-      animation-delay: ${Math.random() * 2}s;
-      animation-duration: ${1.5 + Math.random() * 2}s;
-    `;
-    container.appendChild(star);
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 55; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 3 + 1;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*2}s;animation-duration:${1.5+Math.random()*2}s`;
+    c.appendChild(s);
   }
 }
 
-// ============================================================
-// PITCH DETECTION (YIN-like autocorrelation)
-// ============================================================
+// ──────────────────────────────────────────────────────
+// AUDIO / PITCH DETECTION
+// ──────────────────────────────────────────────────────
 
-let audioCtx = null;
-let analyser = null;
-let mediaStream = null;
-let listening = false;
-let detectionInterval = null;
-let lastDetectedNote = null;
-let silenceFrames = 0;
+let audioCtx = null, analyser = null, mediaStream = null;
+let listening = false, pitchTimer = null;
+let lastMidi  = null, silenceFrames = 0;
 
-const SILENCE_THRESHOLD = 0.01;
-const SILENCE_FRAMES_REQUIRED = 15;
+const SILENCE_RMS    = 0.01;
+const SILENCE_FRAMES = 20;
 
 async function toggleListening() {
-  if (listening) {
-    stopListening();
-  } else {
-    await startListening();
-  }
+  listening ? stopListening() : await startListening();
 }
 
 async function startListening() {
   try {
-    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const source = audioCtx.createMediaStreamSource(mediaStream);
-    analyser = audioCtx.createAnalyser();
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio:true, video:false });
+    audioCtx    = new (window.AudioContext || window.webkitAudioContext)();
+    const src   = audioCtx.createMediaStreamSource(mediaStream);
+    analyser    = audioCtx.createAnalyser();
     analyser.fftSize = 4096;
-    source.connect(analyser);
+    src.connect(analyser);
 
-    listening = true;
-    silenceFrames = 0;
-    lastDetectedNote = null;
-
+    listening = true; silenceFrames = 0; lastMidi = null;
     document.getElementById('micBtn').classList.add('listening');
     document.getElementById('micBtn').textContent = '🔴';
-
     setStatus('👂', 'Aku mendengarkan... Mainkan satu tuts piano!');
-    showListeningWave();
-    document.getElementById('pianoArea').classList.add('visible');
-
-    detectionInterval = setInterval(detectPitch, 60);
+    pitchTimer = setInterval(detectPitch, 60);
   } catch(e) {
     setStatus('😅', 'Izinkan akses mikrofon dulu ya!');
   }
@@ -595,234 +384,162 @@ async function startListening() {
 
 function stopListening() {
   listening = false;
-  clearInterval(detectionInterval);
+  clearInterval(pitchTimer);
   if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
-  if (audioCtx) audioCtx.close();
-
+  if (audioCtx)    audioCtx.close();
   document.getElementById('micBtn').classList.remove('listening');
   document.getElementById('micBtn').textContent = '🎤';
-  setStatus('👋', 'Tekan tombol lagi untuk mendengarkan!');
-  hideListeningWave();
+  setStatus('👋', 'Tekan tombol 🎤 lagi untuk mendengarkan!');
 }
 
 function detectPitch() {
-  const buffer = new Float32Array(analyser.fftSize);
-  analyser.getFloatTimeDomainData(buffer);
+  const buf = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buf);
 
-  // Check volume
-  const rms = Math.sqrt(buffer.reduce((s, v) => s + v * v, 0) / buffer.length);
-
-  if (rms < SILENCE_THRESHOLD) {
-    silenceFrames++;
-    if (silenceFrames > SILENCE_FRAMES_REQUIRED && lastDetectedNote) {
-      // reset after silence
-      lastDetectedNote = null;
+  const rms = Math.sqrt(buf.reduce((s,v) => s + v*v, 0) / buf.length);
+  if (rms < SILENCE_RMS) {
+    if (++silenceFrames > SILENCE_FRAMES && lastMidi !== null) {
+      clearActive(); lastMidi = null;
     }
     return;
   }
-
   silenceFrames = 0;
-  const freq = autoCorrelate(buffer, audioCtx.sampleRate);
-  if (freq < 60 || freq > 1200) return;
 
-  const { note, octave } = freqToNote(freq);
-  const key = note + octave;
+  const freq = autoCorrelate(buf, audioCtx.sampleRate);
+  if (freq < 27 || freq > 4200) return;
 
-  if (key !== lastDetectedNote) {
-    lastDetectedNote = key;
-    showNote(note, octave);
-  }
+  const midi = freqToMidi(freq);
+  if (midi === lastMidi) return;
+  lastMidi = midi;
+
+  const { note, octave } = midiToNote(midi);
+  showNote(note, octave, midi);
 }
 
-// Autocorrelation pitch detection
-function autoCorrelate(buf, sampleRate) {
-  const SIZE = buf.length;
-  const MAX_SAMPLES = Math.floor(SIZE / 2);
-  let bestOffset = -1;
-  let bestCorrelation = 0;
+function autoCorrelate(buf, sr) {
+  const SIZE = buf.length, HALF = SIZE >> 1;
+  let bestOff = -1, bestCorr = 0, lastCorr = 1;
   let rms = 0;
+  for (let i = 0; i < SIZE; i++) rms += buf[i]*buf[i];
+  if (Math.sqrt(rms/SIZE) < 0.005) return -1;
 
-  for (let i = 0; i < SIZE; i++) rms += buf[i] * buf[i];
-  rms = Math.sqrt(rms / SIZE);
-  if (rms < 0.005) return -1;
-
-  let lastCorrelation = 1;
-  for (let offset = 0; offset < MAX_SAMPLES; offset++) {
-    let correlation = 0;
-    for (let i = 0; i < MAX_SAMPLES; i++) {
-      correlation += Math.abs(buf[i] - buf[i + offset]);
+  for (let off = 0; off < HALF; off++) {
+    let corr = 0;
+    for (let i = 0; i < HALF; i++) corr += Math.abs(buf[i] - buf[i+off]);
+    corr = 1 - corr/HALF;
+    if (corr > 0.9 && corr > lastCorr && corr > bestCorr) {
+      bestCorr = corr; bestOff = off;
     }
-    correlation = 1 - correlation / MAX_SAMPLES;
-    if (correlation > 0.9 && correlation > lastCorrelation) {
-      if (correlation > bestCorrelation) {
-        bestCorrelation = correlation;
-        bestOffset = offset;
-      }
-    }
-    lastCorrelation = correlation;
+    lastCorr = corr;
   }
-
-  if (bestCorrelation > 0.01 && bestOffset > 0) {
-    return sampleRate / bestOffset;
-  }
-  return -1;
+  return (bestCorr > 0.01 && bestOff > 0) ? sr / bestOff : -1;
 }
 
-function freqToNote(freq) {
-  const A4 = 440;
-  const semitones = Math.round(12 * Math.log2(freq / A4)) + 69;
-  const noteNames = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  const note = noteNames[((semitones % 12) + 12) % 12];
-  const octave = Math.floor(semitones / 12) - 1;
-  return { note, octave };
-}
+// ──────────────────────────────────────────────────────
+// SHOW / HIGHLIGHT
+// ──────────────────────────────────────────────────────
 
-// ============================================================
-// SHOW NOTE
-// ============================================================
-
-function showNote(note, octave) {
-  // Clear previous active keys
-  document.querySelectorAll('.white-key.active, .black-key.active').forEach(k => {
+function clearActive() {
+  document.querySelectorAll('.wk.active,.bk.active').forEach(k => {
     k.classList.remove('active');
-    k.style.background = '';
-    k.style.borderColor = '';
-    k.style.boxShadow = '';
+    k.style.cssText = '';  // reset inline styles
+    // but don't reset c-label font, it's in the child
   });
+}
 
-  const color = NOTE_COLORS[note] || '#ffffff';
+function highlightKey(midi) {
+  clearActive();
+  const { note } = midiToNote(midi);
+  const color = NOTE_COLORS[note] || '#fff';
+  const blk   = isBlack(midi);
+
+  let el = allKeyEls[midi];
+  if (!el) {
+    const { startMidi, endMidi } = LEVELS[currentLevel];
+    const clamped = Math.max(startMidi, Math.min(endMidi, midi));
+    el = allKeyEls[clamped];
+  }
+  if (!el) return;
+
+  el.classList.add('active');
+  el.style.setProperty('color', color); // for c-label text via inheritance trick
+  if (blk) {
+    el.style.background = `linear-gradient(180deg,${color} 0%,${color}99 100%)`;
+    el.style.boxShadow  = `0 0 12px ${color},inset 0 0 7px rgba(255,255,255,0.2)`;
+  } else {
+    el.style.background  = `linear-gradient(180deg,${color}ff 0%,${color}bb 100%)`;
+    el.style.borderColor = color;
+    el.style.boxShadow   = `0 0 18px ${color},inset 0 0 12px rgba(255,255,255,0.45)`;
+  }
+}
+
+function showNote(note, octave, midi) {
+  const color   = NOTE_COLORS[note] || '#fff';
   const solName = SOL_NAMES[note];
-  const isBlack = note.includes('#');
 
-  // Find the key to highlight — exact octave match first
-  let keyEl = allKeyEls[note + octave];
-  if (!keyEl) {
-    // Clamp to rendered range if out of bounds
-    const clampedOct = Math.max(OCTAVE_START, Math.min(OCTAVE_END, octave));
-    keyEl = allKeyEls[note + clampedOct];
-  }
+  highlightKey(midi);
 
-  if (keyEl) {
-    keyEl.classList.add('active');
-    if (isBlack) {
-      keyEl.style.background = `linear-gradient(180deg, ${color} 0%, ${color}aa 100%)`;
-      keyEl.style.boxShadow = `0 0 20px ${color}, 0 6px 20px rgba(0,0,0,0.5)`;
-    } else {
-      keyEl.style.background = `linear-gradient(180deg, ${color}ff 0%, ${color}cc 100%)`;
-      keyEl.style.boxShadow = `0 0 30px ${color}, inset 0 0 20px rgba(255,255,255,0.5)`;
-      keyEl.style.borderColor = color;
-    }
-    // Scroll the piano so the active key is centered
-    scrollToKey(keyEl);
-  }
-
-  // Note name display
-  const noteNameEl = document.getElementById('noteName');
-  const noteSubEl = document.getElementById('noteSub');
-
-  noteNameEl.classList.remove('show');
-  noteSubEl.classList.remove('show');
-  noteNameEl.style.color = color;
-  noteNameEl.style.textShadow = `0 0 30px ${color}, 0 0 60px ${color}55`;
+  const nameEl = document.getElementById('noteName');
+  const subEl  = document.getElementById('noteSub');
+  nameEl.classList.remove('show'); subEl.classList.remove('show');
+  nameEl.style.color      = color;
+  nameEl.style.textShadow = `0 0 26px ${color},0 0 52px ${color}55`;
 
   setTimeout(() => {
-    noteNameEl.textContent = solName;
-    noteSubEl.textContent = `Nada ${solName} · Oktaf ${octave}`;
-    noteNameEl.classList.add('show');
-    noteSubEl.classList.add('show');
-  }, 50);
+    nameEl.textContent = solName;
+    subEl.textContent  = `Nada ${solName} · Oktaf ${octave}`;
+    nameEl.classList.add('show');
+    subEl.classList.add('show');
+  }, 40);
 
-  // Status message
   const msgs = [
     `🎉 Itu nada ${solName}! Bagus sekali!`,
     `⭐ ${solName}! Kamu hebat!`,
     `🌟 Nada ${solName}! Teruskan!`,
     `🎶 ${solName}! Pintar sekali!`,
   ];
-  const msg = msgs[Math.floor(Math.random() * msgs.length)];
-  setStatus('🎵', msg);
-
-  // Confetti!
+  setStatus('🎵', msgs[Math.floor(Math.random() * msgs.length)]);
   launchConfetti(color);
 }
 
-// ============================================================
-// UI HELPERS
-// ============================================================
+// ──────────────────────────────────────────────────────
+// HELPERS
+// ──────────────────────────────────────────────────────
 
-function scrollToKey(keyEl) {
-  const scrollEl = document.getElementById('keysScroll');
-  if (!scrollEl || !keyEl) return;
-
-  const scrollRect = scrollEl.getBoundingClientRect();
-  const keyRect = keyEl.getBoundingClientRect();
-
-  // Current scroll position + offset of key relative to scroll container
-  const keyLeft = keyRect.left - scrollRect.left + scrollEl.scrollLeft;
-  const keyCenter = keyLeft + keyRect.width / 2;
-  const scrollCenter = scrollRect.width / 2;
-
-  scrollEl.scrollTo({
-    left: keyCenter - scrollCenter,
-    behavior: 'smooth'
-  });
-}
+function setStatus(emoji, text) {
   document.getElementById('statusBubble').innerHTML =
     `<span class="emoji">${emoji}</span><span>${text}</span>`;
 }
 
-let waveEl = null;
-function showListeningWave() {
-  const bubble = document.getElementById('statusBubble');
-  waveEl = document.createElement('div');
-  waveEl.className = 'wave-container';
-  for (let i = 0; i < 5; i++) {
-    const bar = document.createElement('div');
-    bar.className = 'wave-bar';
-    bar.style.animationDelay = (i * 0.1) + 's';
-    waveEl.appendChild(bar);
-  }
-}
-
-function hideListeningWave() {
-  if (waveEl) waveEl.remove();
-}
-
 function launchConfetti(color) {
-  const container = document.getElementById('confetti');
-  const colors = [color, '#FECA57', '#48DBFB', '#FF9FF3', '#ffffff'];
-  for (let i = 0; i < 25; i++) {
-    const piece = document.createElement('div');
-    piece.className = 'confetti-piece';
-    const c = colors[Math.floor(Math.random() * colors.length)];
-    piece.style.cssText = `
-      left: ${20 + Math.random() * 60}%;
-      top: -10px;
-      background: ${c};
-      width: ${6 + Math.random() * 8}px;
-      height: ${6 + Math.random() * 8}px;
-      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-      animation: confettiFall ${0.8 + Math.random() * 1.2}s ${Math.random() * 0.3}s linear forwards;
+  const wrap = document.getElementById('confetti');
+  const pal  = [color,'#FECA57','#48DBFB','#FF9FF3','#fff'];
+  for (let i = 0; i < 20; i++) {
+    const p   = document.createElement('div');
+    p.className = 'cp';
+    const c   = pal[Math.floor(Math.random() * pal.length)];
+    const sz  = 6 + Math.random() * 7;
+    p.style.cssText = `
+      left:${15+Math.random()*70}%;top:-10px;background:${c};
+      width:${sz}px;height:${sz}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation:fall ${0.9+Math.random()*1.2}s ${Math.random()*0.3}s linear forwards;
     `;
-    container.appendChild(piece);
-    setTimeout(() => piece.remove(), 2000);
+    wrap.appendChild(p);
+    setTimeout(() => p.remove(), 2200);
   }
 }
 
-// ============================================================
+// ──────────────────────────────────────────────────────
 // INIT
-// ============================================================
+// ──────────────────────────────────────────────────────
 
 buildStars();
-buildPiano();
-window.addEventListener('resize', updateKeySize);
-updateKeySize();
+buildPiano('pi');   // default: 88 keys
 
-// On first show, center piano at C4 (middle C)
-document.getElementById('pianoArea').addEventListener('transitionend', function onVisible() {
-  const c4 = allKeyEls['C4'];
-  if (c4) scrollToKey(c4);
-  this.removeEventListener('transitionend', onVisible);
+window.addEventListener('resize', () => {
+  // slight delay so layout reflows first
+  setTimeout(scaleToFit, 50);
 });
 </script>
 </body>
