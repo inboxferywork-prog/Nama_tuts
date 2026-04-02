@@ -8,34 +8,25 @@
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
 
   :root { --bg:#1a1a2e; --card:#16213e; --card2:#0f3460; }
-
   * { box-sizing:border-box; margin:0; padding:0; }
 
   body {
-    background:var(--bg);
-    font-family:'Nunito',sans-serif;
-    min-height:100vh;
-    display:flex; flex-direction:column; align-items:center;
-    overflow-x:hidden; overflow-y:auto;
-    padding:16px 0 32px;
+    background:var(--bg); font-family:'Nunito',sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    overflow-x:hidden; overflow-y:auto; padding:16px 0 32px;
   }
 
   /* Stars */
   .stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
   .star  { position:absolute; border-radius:50%; background:white; animation:twinkle 2s infinite alternate; }
-  @keyframes twinkle {
-    from { opacity:0.1; transform:scale(1); }
-    to   { opacity:0.8; transform:scale(1.3); }
-  }
+  @keyframes twinkle { from{opacity:0.1;transform:scale(1)} to{opacity:0.8;transform:scale(1.3)} }
 
-  /* Container */
   .container {
     position:relative; z-index:1;
     display:flex; flex-direction:column; align-items:center;
     gap:16px; padding:0 12px; width:100%;
   }
 
-  /* Title */
   .title {
     font-family:'Fredoka One',cursive;
     font-size:clamp(1.8rem,5vw,3rem); text-align:center;
@@ -46,7 +37,6 @@
   }
   @keyframes titleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-  /* Status */
   .status-bubble {
     background:var(--card); border:3px solid #ffffff22; border-radius:20px;
     padding:12px 22px; text-align:center;
@@ -57,31 +47,30 @@
   .status-bubble .emoji { font-size:1.6em; animation:bounce 0.6s ease infinite alternate; }
   @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-5px)} }
 
-  /* Mic */
   .mic-btn {
     background:linear-gradient(135deg,#FF6B6B,#FF9F43);
     border:none; border-radius:50%; width:78px; height:78px;
     font-size:2rem; cursor:pointer;
     box-shadow:0 0 28px rgba(255,107,107,0.5),0 8px 18px rgba(0,0,0,0.4);
     display:flex; align-items:center; justify-content:center;
-    animation:pulseBtn 2s ease-in-out infinite;
+    animation:pulseBtn 2s ease-in-out infinite; transition:transform 0.15s;
   }
   .mic-btn:hover { transform:scale(1.08); }
   .mic-btn.listening { background:linear-gradient(135deg,#FF2222,#FF6B6B); animation:listenPulse 0.8s ease-in-out infinite; }
   @keyframes pulseBtn  { 0%,100%{box-shadow:0 0 28px rgba(255,107,107,0.5),0 8px 18px rgba(0,0,0,0.4)} 50%{box-shadow:0 0 48px rgba(255,107,107,0.9),0 8px 24px rgba(0,0,0,0.4)} }
   @keyframes listenPulse { 0%,100%{transform:scale(1);box-shadow:0 0 36px rgba(255,30,30,0.8)} 50%{transform:scale(1.07);box-shadow:0 0 64px rgba(255,30,30,1)} }
 
-  /* Level buttons */
+  /* Level buttons — always single row, nowrap */
   .level-btns {
-    display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+    display:flex; gap:8px; justify-content:center; flex-wrap:nowrap;
     width:100%; max-width:560px;
   }
   .level-btn {
     font-family:'Fredoka One',cursive;
-    font-size:clamp(0.78rem,2.2vw,1rem);
-    white-space:nowrap;
-    padding:8px 12px; border:3px solid #ffffff22;
-    border-radius:50px; background:var(--card2); color:#bbb;
+    font-size:clamp(0.72rem,2.2vw,1rem);
+    white-space:nowrap; padding:8px 10px;
+    border:3px solid #ffffff22; border-radius:50px;
+    background:var(--card2); color:#bbb;
     cursor:pointer; transition:all 0.22s ease;
     flex:1; min-width:0;
   }
@@ -95,65 +84,92 @@
   /* Piano card */
   .piano-card {
     background:var(--card); border:3px solid #ffffff15; border-radius:24px;
-    padding:20px 14px 16px;
+    padding:20px 14px 24px;
     display:flex; flex-direction:column; align-items:center; gap:16px;
     width:100%; box-shadow:0 16px 48px rgba(0,0,0,0.5);
   }
 
-  /* Viewport */
+  /* Piano viewport — full width, no scroll */
   .piano-viewport {
-    width:100%; position:relative; overflow:hidden;
-    display:flex; justify-content:center;
+    width:100%; position:relative;
+    /* extra bottom space for middle-C star marker */
+    padding-bottom:22px;
   }
 
-  /* Stage: natural size, then CSS-scale — centered */
-  .keys-stage { position:relative; transform-origin:top center; flex-shrink:0; }
+  /* Stage: natural size, scaled up/down to fill viewport width exactly */
+  .keys-stage { position:relative; transform-origin:top left; }
 
   /* White keys */
   .wk {
     position:absolute; bottom:0;
     background:linear-gradient(180deg,#f8f8f8 0%,#dcdcdc 100%);
     border:1.5px solid #bbb; border-top:none;
-    border-radius:0 0 5px 5px;
+    border-radius:0 0 6px 6px;
     display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
-    padding-bottom:4px; cursor:default;
-    transition:background 0.22s, box-shadow 0.22s;
-    overflow:hidden;
+    padding-bottom:5px; cursor:default;
+    transition:background 0.22s, box-shadow 0.22s; overflow:hidden;
   }
-  .wk.active {
-    border-width:2px;
-    box-shadow:0 0 16px currentColor, inset 0 0 10px rgba(255,255,255,0.55);
-  }
+  .wk.active { border-width:2px; box-shadow:0 0 16px currentColor,inset 0 0 10px rgba(255,255,255,0.55); }
+
+  /* C-key label: 3 lines (4 for C4), high contrast */
   .c-label {
     font-family:'Fredoka One',cursive;
-    font-size:8px; color:#aaa;
-    text-align:center; line-height:1.15;
-    pointer-events:none; user-select:none; white-space:pre-line;
+    font-size:10px; color:#555;
+    text-align:center; line-height:1.3;
+    pointer-events:none; user-select:none;
+    display:flex; flex-direction:column; align-items:center; gap:0;
   }
-  .wk.active .c-label { color:white; }
+  .c-label .lbl-letter { font-size:1em; font-weight:900; color:#333; }
+  .c-label .lbl-sol    { font-size:0.95em; color:#555; }
+  .c-label .lbl-num    { font-size:0.9em; color:#777; }
+  .c-label .lbl-middle { font-size:0.8em; color:#e07b00; font-weight:900; }
+  /* When key is active, make label white */
+  .wk.active .c-label .lbl-letter,
+  .wk.active .c-label .lbl-sol,
+  .wk.active .c-label .lbl-num,
+  .wk.active .c-label .lbl-middle { color:white; }
+
+  /* Middle C star — positioned below the key */
+  .middle-c-star {
+    position:absolute;
+    bottom:-20px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:14px;
+    z-index:5;
+    pointer-events:none;
+    animation:starPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes starPulse { 0%,100%{transform:translateX(-50%) scale(1)} 50%{transform:translateX(-50%) scale(1.3)} }
 
   /* Black keys */
   .bk {
     position:absolute; top:0;
     background:linear-gradient(180deg,#2a2a2a 0%,#111 100%);
-    border-radius:0 0 4px 4px; z-index:2; cursor:default;
+    border-radius:0 0 5px 5px; z-index:2; cursor:default;
     transition:background 0.22s, box-shadow 0.22s;
   }
-  .bk.active { box-shadow:0 0 12px currentColor, inset 0 0 7px rgba(255,255,255,0.22); }
+  .bk.active { box-shadow:0 0 12px currentColor,inset 0 0 7px rgba(255,255,255,0.22); }
 
-  /* Note display */
+  /* Note answer display */
   .note-display {
     display:flex; flex-direction:column; align-items:center;
-    gap:6px; min-height:88px; justify-content:center;
+    gap:4px; min-height:110px; justify-content:center;
   }
   .note-name {
     font-family:'Fredoka One',cursive;
-    font-size:clamp(2.8rem,9vw,4.5rem); letter-spacing:4px;
+    font-size:clamp(2.6rem,8vw,4.2rem); letter-spacing:2px;
     transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);
     opacity:0; transform:scale(0.5) translateY(16px);
   }
   .note-name.show { opacity:1; transform:scale(1) translateY(0); }
-  .note-sub { font-size:0.92rem; color:#aaa; font-weight:700; opacity:0; transition:opacity 0.22s ease 0.12s; }
+  .note-extra {
+    font-family:'Fredoka One',cursive;
+    font-size:clamp(1rem,3vw,1.4rem); opacity:0;
+    transition:opacity 0.22s ease 0.08s; color:#ccc;
+  }
+  .note-extra.show { opacity:1; }
+  .note-sub { font-size:0.88rem; color:#888; font-weight:700; opacity:0; transition:opacity 0.22s ease 0.16s; }
   .note-sub.show { opacity:1; }
 
   /* Confetti */
@@ -189,50 +205,71 @@
       <div class="keys-stage" id="keysStage"></div>
     </div>
     <div class="note-display">
-      <div class="note-name" id="noteName">—</div>
-      <div class="note-sub"  id="noteSub"></div>
+      <div class="note-name"  id="noteName">—</div>
+      <div class="note-extra" id="noteExtra"></div>
+      <div class="note-sub"   id="noteSub"></div>
     </div>
   </div>
 </div>
 
 <script>
-// ──────────────────────────────────────────────────────
-// DATA
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
+// NOTE DATA
+// ══════════════════════════════════════════════════
 
-const SOL_NAMES = {
-  'C':'Do','C#':'Do♯','D':'Re','D#':'Re♯','E':'Mi',
-  'F':'Fa','F#':'Fa♯','G':'Sol','G#':'Sol♯',
-  'A':'La','A#':'La♯','B':'Si'
+// Solmization display names (refinement 6 rules applied in getDisplayName())
+const SOL_BASE = {
+  'C':'Do','C#':'Do#','D':'Re','D#':'Re#','E':'Mi',
+  'F':'Fa','F#':'Fa#','G':'Sol','G#':'Sol#',
+  'A':'La','A#':'La#','B':'Si'
 };
+
+// Letter names for display (refinement 7)
+const LETTER_NAME = {
+  'C':'C','C#':'C#','D':'D','D#':'D#','E':'E',
+  'F':'F','F#':'F#','G':'G','G#':'G#','A':'A','A#':'A#','B':'B'
+};
+
 const NOTE_COLORS = {
   'C':'#FF6B6B','C#':'#FF8070','D':'#FF9F43','D#':'#FFB347',
   'E':'#FECA57','F':'#48DBFB','F#':'#36C9E8','G':'#54A0FF',
   'G#':'#4B8FF0','A':'#A29BFE','A#':'#C39BD3','B':'#FF9FF3'
 };
 
-// MIDI ranges
-// Real 88-key piano: A0=21 … C8=108
+// Refinement 6: special display rules for sharps/flats
+function getDisplayName(note) {
+  switch(note) {
+    case 'C#': return { main:'Do# (Sharp)', letter:'C#' };
+    case 'D#': return { main:'Re# (Sharp)', letter:'D#' };
+    case 'F#': return { main:'Fa# (Sharp)', letter:'F#' };
+    case 'G#': return { main:'Sol# (Sharp)', letter:'G#' };
+    case 'A#': return { main:'Si♭ (Flat)',  letter:'B♭' };  // enharmonic La# → Si♭
+    default:   return { main: SOL_BASE[note], letter: LETTER_NAME[note] };
+  }
+}
+
+// MIDI level ranges
 const LEVELS = {
-  p1: { startMidi:60, endMidi:67  },  // C4–G4
-  p2: { startMidi:47, endMidi:74  },  // B2–D5
+  p1: { startMidi:60, endMidi:71  },  // C4–B4  (refinement 2)
+  p2: { startMidi:47, endMidi:76  },  // B2–E5  (refinement 3)
   kb: { startMidi:36, endMidi:84  },  // C2–C6
   pi: { startMidi:21, endMidi:108 },  // A0–C8 (88 keys)
 };
 
-// Semitone positions in an octave
 const BLACK_SEMIS = new Set([1,3,6,8,10]);
 
-// Base key dimensions (unscaled)
-const WK_W = 22, WK_GAP = 2, WK_H = 112;
-const BK_W = 13, BK_H  = 70;
+// Base key dimensions — will be SCALED UP to fill width exactly
+const BASE_WK_W = 22, BASE_WK_GAP = 2, BASE_WK_H = 112;
+const BASE_BK_RATIO_W = 13/22;   // black key width as fraction of white key
+const BASE_BK_RATIO_H = 70/112;  // black key height fraction
 
 let currentLevel = 'pi';
-let allKeyEls    = {};  // midi number → DOM element
+let allKeyEls    = {};   // midi → DOM element
+let middleCEl    = null; // reference to C4 white key element
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
 // MIDI HELPERS
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
 
 function midiToNote(midi) {
   const names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -241,31 +278,90 @@ function midiToNote(midi) {
 function isBlack(midi) { return BLACK_SEMIS.has(midi % 12); }
 function freqToMidi(freq) { return Math.round(69 + 12 * Math.log2(freq / 440)); }
 
-// ──────────────────────────────────────────────────────
-// BUILD PIANO
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
+// BUILD PIANO — scales to fill viewport exactly (refinements 1,2,3)
+// ══════════════════════════════════════════════════
 
 function buildPiano(level) {
   const stage    = document.getElementById('keysStage');
   const viewport = document.getElementById('pianoViewport');
   stage.innerHTML = '';
-  allKeyEls = {};
+  allKeyEls   = {};
+  middleCEl   = null;
 
   const { startMidi, endMidi } = LEVELS[level];
 
-  // First pass: assign x-position to every white key
-  const whiteX = {}; // midi → left px
+  // Count white keys
+  let whiteCount = 0;
+  for (let m = startMidi; m <= endMidi; m++) {
+    if (!isBlack(m)) whiteCount++;
+  }
+
+  // Compute available viewport width
+  const vw = viewport.clientWidth || viewport.offsetWidth || 320;
+
+  // Compute key width so all white keys fill exactly the viewport width
+  // totalW = whiteCount * WK_W + (whiteCount-1) * WK_GAP = vw
+  // WK_W * whiteCount + WK_GAP * (whiteCount-1) = vw
+  // keeping gap proportional: WK_GAP = WK_W * (BASE_WK_GAP/BASE_WK_W)
+  const gapRatio = BASE_WK_GAP / BASE_WK_W;
+  // WK_W * (whiteCount + gapRatio*(whiteCount-1)) = vw
+  const WK_W = vw / (whiteCount + gapRatio * (whiteCount - 1));
+  const WK_GAP = WK_W * gapRatio;
+  // Scale height proportionally to key width change
+  const scaleFactor = WK_W / BASE_WK_W;
+  const WK_H  = BASE_WK_H  * scaleFactor;
+  const BK_W  = WK_W * BASE_BK_RATIO_W;
+  const BK_H  = WK_H * BASE_BK_RATIO_H;
+
+  // Clamp height: piano mode can get very short, limit min/max
+  // max height 180px (P1 will be big), min 50px (88 keys small screen)
+  const DISPLAY_H = Math.min(200, Math.max(50, WK_H));
+  // Re-derive actual key dims using DISPLAY_H
+  const finalScale = DISPLAY_H / BASE_WK_H;
+  const FWK_W  = BASE_WK_W  * finalScale;
+  const FWK_GAP= BASE_WK_GAP* finalScale;
+  const FWK_H  = DISPLAY_H;
+  const FBK_W  = FWK_W * BASE_BK_RATIO_W;
+  const FBK_H  = FWK_H * BASE_BK_RATIO_H;
+
+  // For small ranges (P1, P2): scale UP to fill width regardless of height cap
+  // Use WK_W-based scale, no height cap for P1/P2/kb
+  let useWK_W, useWK_GAP, useWK_H, useBK_W, useBK_H;
+  if (level === 'pi') {
+    // 88 keys: use display-height-capped version
+    useWK_W  = FWK_W;  useWK_GAP = FWK_GAP;
+    useWK_H  = FWK_H;  useBK_W   = FBK_W;  useBK_H = FBK_H;
+  } else {
+    // P1, P2, KB: scale to fill width, no height cap
+    useWK_W  = WK_W;   useWK_GAP = WK_GAP;
+    useWK_H  = WK_H;   useBK_W   = BK_W;   useBK_H = BK_H;
+    // Still cap height at 240px so P1 doesn't go too tall
+    if (useWK_H > 240) {
+      const hscale = 240 / useWK_H;
+      useWK_W  *= hscale; useWK_GAP *= hscale;
+      useWK_H   = 240;
+      useBK_W  *= hscale; useBK_H   = 240 * BASE_BK_RATIO_H;
+    }
+  }
+
+  // Label font size: proportional to key width
+  const lblSize = Math.max(7, Math.min(13, useWK_W * 0.45));
+
+  // Assign white key x positions
+  const whiteX = {};
   let x = 0;
   for (let m = startMidi; m <= endMidi; m++) {
     if (!isBlack(m)) {
       whiteX[m] = x;
-      x += WK_W + WK_GAP;
+      x += useWK_W + useWK_GAP;
     }
   }
-  const totalW = x - WK_GAP; // remove trailing gap
+  const totalW = x - useWK_GAP;
 
   stage.style.width  = totalW + 'px';
-  stage.style.height = WK_H   + 'px';
+  stage.style.height = useWK_H + 'px';
+  stage.style.transform = '';
 
   // White keys
   for (let m = startMidi; m <= endMidi; m++) {
@@ -274,66 +370,77 @@ function buildPiano(level) {
     const el = document.createElement('div');
     el.className = 'wk';
     el.style.left   = whiteX[m] + 'px';
-    el.style.width  = WK_W + 'px';
-    el.style.height = WK_H + 'px';
+    el.style.width  = useWK_W   + 'px';
+    el.style.height = useWK_H   + 'px';
 
+    // Refinement 4: label only C keys, 3 lines (4 for C4)
     if (note === 'C') {
       const lbl = document.createElement('div');
       lbl.className = 'c-label';
-      lbl.textContent = octave === 4 ? 'Middle\nDo' : 'Do' + octave;
+      lbl.style.fontSize = lblSize + 'px';
+
+      if (octave === 4) {
+        // C4: 4 lines — Middle / C / Do / 4
+        lbl.innerHTML =
+          `<span class="lbl-middle" style="font-size:${lblSize*0.82}px">Middle</span>` +
+          `<span class="lbl-letter" style="font-size:${lblSize}px">C</span>` +
+          `<span class="lbl-sol"    style="font-size:${lblSize*0.9}px">Do</span>` +
+          `<span class="lbl-num"    style="font-size:${lblSize*0.82}px">4</span>`;
+      } else {
+        // Other C: 3 lines — C / Do / octave number
+        lbl.innerHTML =
+          `<span class="lbl-letter" style="font-size:${lblSize}px">C</span>` +
+          `<span class="lbl-sol"    style="font-size:${lblSize*0.9}px">Do</span>` +
+          `<span class="lbl-num"    style="font-size:${lblSize*0.82}px">${octave}</span>`;
+      }
       el.appendChild(lbl);
+
+      // Refinement 5: star below Middle C (C4)
+      if (octave === 4) {
+        middleCEl = el;
+        const star = document.createElement('div');
+        star.className = 'middle-c-star';
+        star.textContent = '⭐';
+        star.style.fontSize = Math.max(10, lblSize * 1.2) + 'px';
+        el.appendChild(star);
+        el.style.overflow = 'visible'; // allow star to show below key
+      }
     }
+
     stage.appendChild(el);
     allKeyEls[m] = el;
   }
 
-  // Black keys — centered between adjacent white keys
+  // Black keys
   for (let m = startMidi; m <= endMidi; m++) {
     if (!isBlack(m)) continue;
-
     const leftW  = whiteX[m - 1];
     const rightW = whiteX[m + 1];
     let bx;
     if (leftW !== undefined && rightW !== undefined) {
-      bx = leftW + WK_W + WK_GAP / 2 - BK_W / 2;
+      bx = leftW + useWK_W + useWK_GAP / 2 - useBK_W / 2;
     } else if (leftW !== undefined) {
-      bx = leftW + WK_W - BK_W / 2;
+      bx = leftW + useWK_W - useBK_W / 2;
     } else if (rightW !== undefined) {
-      bx = rightW - BK_W / 2;
+      bx = rightW - useBK_W / 2;
     } else continue;
 
     const el = document.createElement('div');
     el.className = 'bk';
-    el.style.left   = bx   + 'px';
-    el.style.width  = BK_W + 'px';
-    el.style.height = BK_H + 'px';
+    el.style.left   = Math.max(0, bx) + 'px';
+    el.style.width  = useBK_W + 'px';
+    el.style.height = useBK_H + 'px';
     stage.appendChild(el);
     allKeyEls[m] = el;
   }
 
-  scaleToFit();
+  // Set viewport height to match piano height + star space
+  viewport.style.height = (useWK_H + 22) + 'px';
 }
 
-function scaleToFit() {
-  const stage    = document.getElementById('keysStage');
-  const viewport = document.getElementById('pianoViewport');
-  const vw       = viewport.clientWidth || viewport.offsetWidth || 300;
-  const nw       = parseFloat(stage.style.width) || 1;
-  const scale    = Math.min(1, vw / nw);
-  stage.style.transform = `scale(${scale})`;
-  // Set viewport height to match scaled piano height
-  viewport.style.height = (WK_H * scale) + 'px';
-  // If stage fits (no scale needed), center it via margin auto
-  if (scale >= 1) {
-    stage.style.margin = '0 auto';
-  } else {
-    stage.style.margin = '';
-  }
-}
-
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
 // LEVEL SWITCHING
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
 
 function setLevel(level) {
   currentLevel = level;
@@ -344,9 +451,9 @@ function setLevel(level) {
   if (lastMidi !== null) highlightKey(lastMidi);
 }
 
-// ──────────────────────────────────────────────────────
-// STARS
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
+// STARS BACKGROUND
+// ══════════════════════════════════════════════════
 
 function buildStars() {
   const c = document.getElementById('stars');
@@ -359,16 +466,23 @@ function buildStars() {
   }
 }
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
 // AUDIO / PITCH DETECTION
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
 
 let audioCtx = null, analyser = null, mediaStream = null;
 let listening = false, pitchTimer = null;
 let lastMidi  = null, silenceFrames = 0;
 
-const SILENCE_RMS    = 0.01;
-const SILENCE_FRAMES = 20;
+// Refinement 8: ignore sounds below 70 dB SPL equivalent
+// RMS-to-dBFS: dBFS = 20*log10(rms). 70 dBFS from 0 dBFS peak ≈ rms threshold.
+// Full-scale 0 dBFS = rms 1.0. Each 20 dB = 10x RMS.
+// We want to ignore < 70 dB below peak → rms < 10^(-70/20) ≈ 0.000316
+// But microphone gain varies; a practical threshold ~ 0.02–0.05 works well.
+// We'll use 0.035 which corresponds to roughly -29 dBFS, a clear piano strike vs ambient.
+const DB_THRESHOLD     = 70;   // dB (relative, for UI reference)
+const RMS_THRESHOLD    = Math.pow(10, -(100 - DB_THRESHOLD) / 20); // ≈ 0.00316
+const SILENCE_FRAMES   = 25;
 
 async function toggleListening() {
   listening ? stopListening() : await startListening();
@@ -380,14 +494,14 @@ async function startListening() {
     audioCtx    = new (window.AudioContext || window.webkitAudioContext)();
     const src   = audioCtx.createMediaStreamSource(mediaStream);
     analyser    = audioCtx.createAnalyser();
-    analyser.fftSize = 4096;
+    analyser.fftSize = 8192; // larger = better low-freq resolution
     src.connect(analyser);
 
     listening = true; silenceFrames = 0; lastMidi = null;
     document.getElementById('micBtn').classList.add('listening');
     document.getElementById('micBtn').textContent = '🔴';
     setStatus('👂', 'Aku mendengarkan... Mainkan satu tuts piano!');
-    pitchTimer = setInterval(detectPitch, 60);
+    pitchTimer = setInterval(detectPitch, 80);
   } catch(e) {
     setStatus('😅', 'Izinkan akses mikrofon dulu ya!');
   }
@@ -407,8 +521,13 @@ function detectPitch() {
   const buf = new Float32Array(analyser.fftSize);
   analyser.getFloatTimeDomainData(buf);
 
-  const rms = Math.sqrt(buf.reduce((s,v) => s + v*v, 0) / buf.length);
-  if (rms < SILENCE_RMS) {
+  // Compute RMS
+  let sumSq = 0;
+  for (let i = 0; i < buf.length; i++) sumSq += buf[i] * buf[i];
+  const rms = Math.sqrt(sumSq / buf.length);
+
+  // Refinement 8: threshold gate — ignore sounds below ~70 dB
+  if (rms < RMS_THRESHOLD) {
     if (++silenceFrames > SILENCE_FRAMES && lastMidi !== null) {
       clearActive(); lastMidi = null;
     }
@@ -420,6 +539,7 @@ function detectPitch() {
   if (freq < 27 || freq > 4200) return;
 
   const midi = freqToMidi(freq);
+  if (midi < 21 || midi > 108) return; // outside piano range
   if (midi === lastMidi) return;
   lastMidi = midi;
 
@@ -427,54 +547,37 @@ function detectPitch() {
   showNote(note, octave, midi);
 }
 
-// Robust pitch detection: NSDF autocorrelation (McLeod Pitch Method simplified)
-// Avoids sub-octave errors by finding first strong peak, not the global maximum
+// McLeod Pitch Method (NSDF) — finds first strong peak to avoid octave errors
 function detectFrequency(buf, sr) {
-  const N = buf.length;
-  const MAXLAG = Math.floor(sr / 27.5);   // lowest piano note A0
-  const MINLAG = Math.floor(sr / 4200);   // highest useful frequency
+  const N      = buf.length;
+  const MAXLAG = Math.floor(sr / 27.5);
+  const MINLAG = Math.floor(sr / 4200);
+  const nsdf   = new Float32Array(MAXLAG + 1);
 
-  // Step 1: compute NSDF (Normalized Square Difference Function)
-  // nsdf[lag] = 1 - sdf[lag] / acf[0]*2  (ranges -1..1, peaks near 1)
-  const nsdf = new Float32Array(MAXLAG + 1);
-
-  // Running sum for the autocorrelation normalization
   let acf0 = 0;
   for (let i = 0; i < N; i++) acf0 += buf[i] * buf[i];
   if (acf0 < 1e-6) return -1;
 
   for (let lag = MINLAG; lag <= MAXLAG; lag++) {
-    let sdf = 0;
+    let sdf = 0, norm = 0;
     const len = N - lag;
     for (let i = 0; i < len; i++) {
       const d = buf[i] - buf[i + lag];
-      sdf += d * d;
+      sdf  += d * d;
+      norm += buf[i]*buf[i] + buf[i+lag]*buf[i+lag];
     }
-    // Compute sum of squares for normalization
-    let norm = 0;
-    for (let i = 0; i < len; i++) norm += buf[i]*buf[i] + buf[i+lag]*buf[i+lag];
     nsdf[lag] = norm < 1e-9 ? 0 : 1 - sdf / norm;
   }
 
-  // Step 2: find the FIRST peak above threshold 0.8
-  // (MPM: find first positive-to-negative zero crossing after first negative region,
-  //  then pick highest peak in that first period)
-  const THRESHOLD = 0.80;
-  let peakLag  = -1;
-  let peakVal  = THRESHOLD;
+  // Find first peak ≥ threshold (avoids sub-octave / harmonic errors)
+  const THRESH = 0.82;
+  let peakLag = -1, peakVal = THRESH, prevVal = nsdf[MINLAG];
 
-  // scan from MINLAG upward, look for first peak >= threshold
-  let prevVal = nsdf[MINLAG];
   for (let lag = MINLAG + 1; lag <= MAXLAG; lag++) {
     const v = nsdf[lag];
-    if (prevVal < v && v >= THRESHOLD) {
-      // local max candidate — confirm it's a true peak
-      if (lag + 1 <= MAXLAG && nsdf[lag + 1] <= v) {
-        if (v > peakVal) {
-          peakVal = v;
-          peakLag = lag;
-          break; // take FIRST strong peak to avoid sub-octave errors
-        }
+    if (v >= THRESH && v >= prevVal) {
+      if (lag + 1 > MAXLAG || nsdf[lag + 1] <= v) {
+        if (v > peakVal) { peakVal = v; peakLag = lag; break; }
       }
     }
     prevVal = v;
@@ -482,19 +585,18 @@ function detectFrequency(buf, sr) {
 
   if (peakLag < 1) return -1;
 
-  // Parabolic interpolation for finer frequency estimate
-  const y0 = nsdf[peakLag - 1] || nsdf[peakLag];
+  // Parabolic interpolation for sub-sample accuracy
+  const y0 = nsdf[peakLag - 1] ?? nsdf[peakLag];
   const y1 = nsdf[peakLag];
-  const y2 = (peakLag + 1 <= MAXLAG) ? nsdf[peakLag + 1] : y1;
-  const denom = (2 * y1 - y0 - y2);
-  const refinedLag = denom === 0 ? peakLag : peakLag + 0.5 * (y0 - y2) / denom;
-
-  return sr / refinedLag;
+  const y2 = peakLag + 1 <= MAXLAG ? nsdf[peakLag + 1] : y1;
+  const denom = 2 * y1 - y0 - y2;
+  const lag   = denom === 0 ? peakLag : peakLag + 0.5 * (y0 - y2) / denom;
+  return sr / lag;
 }
 
-// ──────────────────────────────────────────────────────
-// SHOW / HIGHLIGHT
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
+// HIGHLIGHT & SHOW NOTE
+// ══════════════════════════════════════════════════
 
 function clearActive() {
   document.querySelectorAll('.wk.active').forEach(k => {
@@ -502,13 +604,11 @@ function clearActive() {
     k.style.background  = '';
     k.style.borderColor = '';
     k.style.boxShadow   = '';
-    k.style.color       = '';
   });
   document.querySelectorAll('.bk.active').forEach(k => {
     k.classList.remove('active');
     k.style.background = '';
     k.style.boxShadow  = '';
-    k.style.color      = '';
   });
 }
 
@@ -527,7 +627,6 @@ function highlightKey(midi) {
   if (!el) return;
 
   el.classList.add('active');
-  el.style.setProperty('color', color); // for c-label text via inheritance trick
   if (blk) {
     el.style.background = `linear-gradient(180deg,${color} 0%,${color}99 100%)`;
     el.style.boxShadow  = `0 0 12px ${color},inset 0 0 7px rgba(255,255,255,0.2)`;
@@ -540,36 +639,43 @@ function highlightKey(midi) {
 
 function showNote(note, octave, midi) {
   const color   = NOTE_COLORS[note] || '#fff';
-  const solName = SOL_NAMES[note];
+  const { main: displayName, letter } = getDisplayName(note);
 
   highlightKey(midi);
 
-  const nameEl = document.getElementById('noteName');
-  const subEl  = document.getElementById('noteSub');
-  nameEl.classList.remove('show'); subEl.classList.remove('show');
+  const nameEl  = document.getElementById('noteName');
+  const extraEl = document.getElementById('noteExtra');
+  const subEl   = document.getElementById('noteSub');
+
+  nameEl.classList.remove('show'); extraEl.classList.remove('show'); subEl.classList.remove('show');
   nameEl.style.color      = color;
-  nameEl.style.textShadow = `0 0 26px ${color},0 0 52px ${color}55`;
+  nameEl.style.textShadow = `0 0 24px ${color},0 0 48px ${color}55`;
+  extraEl.style.color     = color;
 
   setTimeout(() => {
-    nameEl.textContent = solName;
-    subEl.textContent  = `Nada ${solName} · Oktaf ${octave}`;
+    // Refinement 6+7: main = solmization (with sharp/flat rules), extra = "- Letter"
+    nameEl.textContent  = displayName;
+    extraEl.textContent = `— ${letter}`;
+    subEl.textContent   = `Oktaf ${octave}`;
     nameEl.classList.add('show');
+    extraEl.classList.add('show');
     subEl.classList.add('show');
   }, 40);
 
+  const baseName = displayName.split(' ')[0]; // e.g. "Do#" from "Do# (Sharp)"
   const msgs = [
-    `🎉 Itu nada ${solName}! Bagus sekali!`,
-    `⭐ ${solName}! Kamu hebat!`,
-    `🌟 Nada ${solName}! Teruskan!`,
-    `🎶 ${solName}! Pintar sekali!`,
+    `🎉 Itu nada ${baseName}! Bagus sekali!`,
+    `⭐ ${baseName}! Kamu hebat!`,
+    `🌟 Nada ${baseName}! Teruskan!`,
+    `🎶 ${baseName}! Pintar sekali!`,
   ];
   setStatus('🎵', msgs[Math.floor(Math.random() * msgs.length)]);
   launchConfetti(color);
 }
 
-// ──────────────────────────────────────────────────────
-// HELPERS
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════════
 
 function setStatus(emoji, text) {
   document.getElementById('statusBubble').innerHTML =
@@ -580,10 +686,10 @@ function launchConfetti(color) {
   const wrap = document.getElementById('confetti');
   const pal  = [color,'#FECA57','#48DBFB','#FF9FF3','#fff'];
   for (let i = 0; i < 20; i++) {
-    const p   = document.createElement('div');
+    const p  = document.createElement('div');
     p.className = 'cp';
-    const c   = pal[Math.floor(Math.random() * pal.length)];
-    const sz  = 6 + Math.random() * 7;
+    const c  = pal[Math.floor(Math.random() * pal.length)];
+    const sz = 6 + Math.random() * 7;
     p.style.cssText = `
       left:${15+Math.random()*70}%;top:-10px;background:${c};
       width:${sz}px;height:${sz}px;
@@ -595,16 +701,20 @@ function launchConfetti(color) {
   }
 }
 
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
 // INIT
-// ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════
 
 buildStars();
-buildPiano('pi');   // default: 88 keys
+// Wait for layout then build piano
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    buildPiano('pi');
+  });
+});
 
 window.addEventListener('resize', () => {
-  // slight delay so layout reflows first
-  setTimeout(scaleToFit, 50);
+  setTimeout(() => buildPiano(currentLevel), 60);
 });
 </script>
 </body>
