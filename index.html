@@ -78,11 +78,12 @@
   }
   .level-btn {
     font-family:'Fredoka One',cursive;
-    font-size:clamp(0.72rem,1.9vw,0.98rem);
-    padding:8px 14px; border:3px solid #ffffff22;
+    font-size:clamp(0.78rem,2.2vw,1rem);
+    white-space:nowrap;
+    padding:8px 12px; border:3px solid #ffffff22;
     border-radius:50px; background:var(--card2); color:#bbb;
     cursor:pointer; transition:all 0.22s ease;
-    flex:1; min-width:80px; max-width:130px;
+    flex:1; min-width:0;
   }
   .level-btn:hover { transform:scale(1.05); border-color:#ffffff55; color:white; }
   .level-btn.active { color:white; border-color:transparent; }
@@ -100,10 +101,13 @@
   }
 
   /* Viewport */
-  .piano-viewport { width:100%; position:relative; overflow:hidden; }
+  .piano-viewport {
+    width:100%; position:relative; overflow:hidden;
+    display:flex; justify-content:center;
+  }
 
-  /* Stage: natural size, then CSS-scale to fit */
-  .keys-stage { position:relative; transform-origin:top left; }
+  /* Stage: natural size, then CSS-scale — centered */
+  .keys-stage { position:relative; transform-origin:top center; flex-shrink:0; }
 
   /* White keys */
   .wk {
@@ -317,7 +321,14 @@ function scaleToFit() {
   const nw       = parseFloat(stage.style.width) || 1;
   const scale    = Math.min(1, vw / nw);
   stage.style.transform = `scale(${scale})`;
+  // Set viewport height to match scaled piano height
   viewport.style.height = (WK_H * scale) + 'px';
+  // If stage fits (no scale needed), center it via margin auto
+  if (scale >= 1) {
+    stage.style.margin = '0 auto';
+  } else {
+    stage.style.margin = '';
+  }
 }
 
 // ──────────────────────────────────────────────────────
@@ -405,7 +416,7 @@ function detectPitch() {
   }
   silenceFrames = 0;
 
-  const freq = autoCorrelate(buf, audioCtx.sampleRate);
+  const freq = detectFrequency(buf, audioCtx.sampleRate);
   if (freq < 27 || freq > 4200) return;
 
   const midi = freqToMidi(freq);
@@ -416,23 +427,69 @@ function detectPitch() {
   showNote(note, octave, midi);
 }
 
-function autoCorrelate(buf, sr) {
-  const SIZE = buf.length, HALF = SIZE >> 1;
-  let bestOff = -1, bestCorr = 0, lastCorr = 1;
-  let rms = 0;
-  for (let i = 0; i < SIZE; i++) rms += buf[i]*buf[i];
-  if (Math.sqrt(rms/SIZE) < 0.005) return -1;
+// Robust pitch detection: NSDF autocorrelation (McLeod Pitch Method simplified)
+// Avoids sub-octave errors by finding first strong peak, not the global maximum
+function detectFrequency(buf, sr) {
+  const N = buf.length;
+  const MAXLAG = Math.floor(sr / 27.5);   // lowest piano note A0
+  const MINLAG = Math.floor(sr / 4200);   // highest useful frequency
 
-  for (let off = 0; off < HALF; off++) {
-    let corr = 0;
-    for (let i = 0; i < HALF; i++) corr += Math.abs(buf[i] - buf[i+off]);
-    corr = 1 - corr/HALF;
-    if (corr > 0.9 && corr > lastCorr && corr > bestCorr) {
-      bestCorr = corr; bestOff = off;
+  // Step 1: compute NSDF (Normalized Square Difference Function)
+  // nsdf[lag] = 1 - sdf[lag] / acf[0]*2  (ranges -1..1, peaks near 1)
+  const nsdf = new Float32Array(MAXLAG + 1);
+
+  // Running sum for the autocorrelation normalization
+  let acf0 = 0;
+  for (let i = 0; i < N; i++) acf0 += buf[i] * buf[i];
+  if (acf0 < 1e-6) return -1;
+
+  for (let lag = MINLAG; lag <= MAXLAG; lag++) {
+    let sdf = 0;
+    const len = N - lag;
+    for (let i = 0; i < len; i++) {
+      const d = buf[i] - buf[i + lag];
+      sdf += d * d;
     }
-    lastCorr = corr;
+    // Compute sum of squares for normalization
+    let norm = 0;
+    for (let i = 0; i < len; i++) norm += buf[i]*buf[i] + buf[i+lag]*buf[i+lag];
+    nsdf[lag] = norm < 1e-9 ? 0 : 1 - sdf / norm;
   }
-  return (bestCorr > 0.01 && bestOff > 0) ? sr / bestOff : -1;
+
+  // Step 2: find the FIRST peak above threshold 0.8
+  // (MPM: find first positive-to-negative zero crossing after first negative region,
+  //  then pick highest peak in that first period)
+  const THRESHOLD = 0.80;
+  let peakLag  = -1;
+  let peakVal  = THRESHOLD;
+
+  // scan from MINLAG upward, look for first peak >= threshold
+  let prevVal = nsdf[MINLAG];
+  for (let lag = MINLAG + 1; lag <= MAXLAG; lag++) {
+    const v = nsdf[lag];
+    if (prevVal < v && v >= THRESHOLD) {
+      // local max candidate — confirm it's a true peak
+      if (lag + 1 <= MAXLAG && nsdf[lag + 1] <= v) {
+        if (v > peakVal) {
+          peakVal = v;
+          peakLag = lag;
+          break; // take FIRST strong peak to avoid sub-octave errors
+        }
+      }
+    }
+    prevVal = v;
+  }
+
+  if (peakLag < 1) return -1;
+
+  // Parabolic interpolation for finer frequency estimate
+  const y0 = nsdf[peakLag - 1] || nsdf[peakLag];
+  const y1 = nsdf[peakLag];
+  const y2 = (peakLag + 1 <= MAXLAG) ? nsdf[peakLag + 1] : y1;
+  const denom = (2 * y1 - y0 - y2);
+  const refinedLag = denom === 0 ? peakLag : peakLag + 0.5 * (y0 - y2) / denom;
+
+  return sr / refinedLag;
 }
 
 // ──────────────────────────────────────────────────────
@@ -440,10 +497,18 @@ function autoCorrelate(buf, sr) {
 // ──────────────────────────────────────────────────────
 
 function clearActive() {
-  document.querySelectorAll('.wk.active,.bk.active').forEach(k => {
+  document.querySelectorAll('.wk.active').forEach(k => {
     k.classList.remove('active');
-    k.style.cssText = '';  // reset inline styles
-    // but don't reset c-label font, it's in the child
+    k.style.background  = '';
+    k.style.borderColor = '';
+    k.style.boxShadow   = '';
+    k.style.color       = '';
+  });
+  document.querySelectorAll('.bk.active').forEach(k => {
+    k.classList.remove('active');
+    k.style.background = '';
+    k.style.boxShadow  = '';
+    k.style.color      = '';
   });
 }
 
